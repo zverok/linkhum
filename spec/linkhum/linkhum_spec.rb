@@ -61,5 +61,16 @@ describe LinkHum do
   end
 
   context 'special patterns' do
+    let(:klass){
+      Class.new(described_class){
+        special /@(\S+)\b/ do |username|
+          "http://oursite/users/#{username}" if username == 'dude'
+        end
+      }
+    }
+    it 'should do smart replacement' do
+      expect(klass.urlify("It's @dude and @someguy")).to eq \
+        "It's <a href='http://oursite/users/dude'>@dude</a> and @someguy"
+    end
   end
 end

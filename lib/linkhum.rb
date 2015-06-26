@@ -8,6 +8,12 @@ class LinkHum
     def urlify(text, options = {}, &block)
       new(text).urlify(options.merge(link_processor: block || NOOP))
     end
+
+    def special(pattern = nil, &block)
+      return @special unless pattern
+
+      @special = [pattern, block]
+    end
   end
 
   PROTOCOLS = '(?:https?|ftp)'
@@ -37,7 +43,24 @@ class LinkHum
     end
 
     def process_text(str)
-      str
+      pattern, block = self.class.special
+
+      if pattern
+        str.gsub(pattern){|s|
+          if u = block.call(*arguments(pattern, s))
+            "<a href='#{u}'>#{s}</a>"
+          else
+            s
+          end
+        }
+      else
+        str
+      end
+    end
+
+    def arguments(pattern, string)
+      m = pattern.match(string)
+      m.captures.empty? ? m[0] : m.captures
     end
 
     def make_link(url, options)
