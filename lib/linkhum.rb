@@ -12,14 +12,15 @@ class LinkHum
     def special(pattern = nil, &block)
       return @special unless pattern
 
-      @special and puts("Warning: redefining #{self}.special from #{caller.first}")
+      @special and
+        puts("Warning: redefining #{self}.special from #{caller.first}")
 
       @special = [pattern, block]
     end
   end
 
   PROTOCOLS = '(?:https?|ftp)'
-  SPLIT_PATTERN = /(#{PROTOCOLS}:\/\/\p{^Space}+)/i
+  SPLIT_PATTERN = %r{(#{PROTOCOLS}://\p{^Space}+)}i
 
   MAX_DISPLAY_LENGHT = 64
 
@@ -36,63 +37,67 @@ class LinkHum
 
   private
 
-    def process_url(str, options)
-      url, punct = str.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
-      return str unless url
-      
-      url << punct.slice!(0) if (punct[0] == '/' || (punct[0] == ')' && url.include?('(')))
-      make_link(url, options) + punct
+  def process_url(str, options)
+    url, punct = str.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
+    return str unless url
+
+    if punct[0] == '/' || (punct[0] == ')' && url.include?('('))
+      url << punct.slice!(0)
     end
+    
+    make_link(url, options) + punct
+  end
 
-    def process_text(str)
-      pattern, block = self.class.special
+  def process_text(str)
+    pattern, block = self.class.special
 
-      if pattern
-        str.gsub(pattern){|s|
-          if u = block.call(*arguments(pattern, s))
-            "<a href='#{u}'>#{s}</a>"
-          else
-            s
-          end
-        }
-      else
-        str
-      end
+    if pattern
+      str.gsub(pattern){|s|
+        if (u = block.call(*arguments(pattern, s)))
+          "<a href='#{u}'>#{s}</a>"
+        else
+          s
+        end
+      }
+    else
+      str
     end
+  end
 
-    def arguments(pattern, string)
-      m = pattern.match(string)
-      m.captures.empty? ? m[0] : m.captures
-    end
+  def arguments(pattern, string)
+    m = pattern.match(string)
+    m.captures.empty? ? m[0] : m.captures
+  end
 
-    def make_link(url, options)
-      uri = Addressable::URI.parse(url) rescue nil
-      return url unless uri
+  def make_link(url, options)
+    uri = Addressable::URI.parse(url) rescue nil
+    return url unless uri
 
-      canonical = Addressable::URI.normalized_encode(uri) rescue uri
+    canonical = Addressable::URI.normalized_encode(uri) rescue uri
 
-      display_length = options.fetch(:max_length, MAX_DISPLAY_LENGHT)
-      "<a href='#{canonical}'#{make_attrs(uri, options)}>#{truncate(url, display_length)}</a>"
-    end
+    display_length = options.fetch(:max_length, MAX_DISPLAY_LENGHT)
+    "<a href='#{canonical}'#{make_attrs(uri, options)}>"\
+      "#{truncate(url, display_length)}</a>"
+  end
 
-    def make_attrs(uri, options)
-      block = options[:link_processor] || method(:link_attrs)
-      attrs = block.call(uri) || {}
-      return '' if attrs.empty?
-      ' ' + attrs.map{|n, v| "#{n}='#{v.to_s}'"}.join(' ')
-    end
+  def make_attrs(uri, options)
+    block = options[:link_processor] || method(:link_attrs)
+    attrs = block.call(uri) || {}
+    return '' if attrs.empty?
+    ' ' + attrs.map{|n, v| "#{n}='#{v}'"}.join(' ')
+  end
 
-    def link_attrs(*)
-    end
+  def link_attrs(*)
+  end
 
-    # stolen from activesupport/lib/active_support/core_ext/string/filters.rb, line 64
-    # then simplified
-    def truncate(string, truncate_at)
-      return string.dup if !truncate_at || string.length <= truncate_at
+  # stolen from activesupport/lib/active_support/core_ext/string/filters.rb
+  # then simplified
+  def truncate(string, truncate_at)
+    return string.dup if !truncate_at || string.length <= truncate_at
 
-      omission = '...'
-      stop = truncate_at - omission.length
+    omission = '...'
+    stop = truncate_at - omission.length
 
-      "#{string[0, stop]}#{omission}"
-    end
+    "#{string[0, stop]}#{omission}"
+  end
 end

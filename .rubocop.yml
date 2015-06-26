@@ -1,0 +1,40 @@
+AllCops:
+  Include:
+    - 'lib/**/*'
+  Exclude:
+    - 'spec/*'
+    - 'spec/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+
+# My editor is A BIT DUMB
+Style/TrailingWhitespace:
+  Enabled: false
+
+# I'm big fan of and/or for flow control
+Style/AndOr:
+  Enabled: false
+
+# I'm working on it!
+Style/Documentation:
+  Enabled: false
+
+# Everything else is just my personal style
+Style/SpaceInsideBlockBraces:
+  EnforcedStyle: no_space
+  SpaceBeforeBlockParameters: false
+
+Style/SpaceBeforeBlockBraces:
+  EnforcedStyle: no_space
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+Style/FormatString:
+  EnforcedStyle: percent
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/RescueModifier:
+  Enabled: false
