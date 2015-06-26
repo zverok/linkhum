@@ -11,6 +11,8 @@ class LinkHum
   PROTOCOLS = '(?:https?|ftp)'
   SPLIT_PATTERN = /(#{PROTOCOLS}:\/\/\p{^Space}+)/i
 
+  MAX_DISPLAY_LENGHT = 64
+
   def initialize(text)
     @text = text
     @components = @text.split(SPLIT_PATTERN)
@@ -22,23 +24,38 @@ class LinkHum
     }.join
   end
 
-  def process_url(str, options)
-    url, punct = str.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
-    return str unless url
-    
-    url << punct.slice!(0) if (punct[0] == '/' || (punct[0] == ')' && url.include?('(')))
-    make_link(url) + punct
-  end
+  private
 
-  def process_text(str)
-    str
-  end
+    def process_url(str, options)
+      url, punct = str.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
+      return str unless url
+      
+      url << punct.slice!(0) if (punct[0] == '/' || (punct[0] == ')' && url.include?('(')))
+      make_link(url, options) + punct
+    end
 
-  def make_link(url)
-    uri = Addressable::URI.parse(url) rescue nil
-    return url unless uri
+    def process_text(str)
+      str
+    end
 
-    canonical = Addressable::URI.normalized_encode(uri) rescue uri
-    "<a href='#{canonical}'>#{url}</a>"
-  end
+    def make_link(url, options)
+      uri = Addressable::URI.parse(url) rescue nil
+      return url unless uri
+
+      canonical = Addressable::URI.normalized_encode(uri) rescue uri
+
+      display_length = options.fetch(:max_length, MAX_DISPLAY_LENGHT)
+      "<a href='#{canonical}'>#{truncate(url, display_length)}</a>"
+    end
+
+    # stolen from activesupport/lib/active_support/core_ext/string/filters.rb, line 64
+    # then simplified
+    def truncate(string, truncate_at)
+      return string.dup if !truncate_at || string.length <= truncate_at
+
+      omission = '...'
+      stop = truncate_at - omission.length
+
+      "#{string[0, stop]}#{omission}"
+    end
 end
