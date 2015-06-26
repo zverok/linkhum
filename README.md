@@ -106,7 +106,7 @@ class MyLinks < LinkHum
 end
 
 MyLinks.urlify("http://oursite.com/posts/12345 has been mentioned at http://cnn.com")
-# => 
+# => "<a href='http://oursite.com/posts/12345'>http://oursite.com/posts/12345</a> has been mentioned at <a href='http://cnn.com' target='_blank'>http://cnn.com</a>"
 ```
 
 You can also define special strings, which should also became URLs on your
