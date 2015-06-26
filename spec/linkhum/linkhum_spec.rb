@@ -57,6 +57,18 @@ describe LinkHum do
     end
 
     context 'inheritance' do
+      let(:klass){
+        Class.new(described_class){
+          def link_attrs(uri)
+            {target: '_blank'}
+          end
+        }
+      }
+
+      it 'works' do
+        expect(klass.urlify('http://google.com')).to eq \
+          "<a href='http://google.com' target='_blank'>http://google.com</a>"
+      end
     end
   end
 

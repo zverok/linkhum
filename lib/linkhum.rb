@@ -6,11 +6,13 @@ class LinkHum
     NOOP = ->(*){}
     
     def urlify(text, options = {}, &block)
-      new(text).urlify(options.merge(link_processor: block || NOOP))
+      new(text).urlify(options.merge(link_processor: block))
     end
 
     def special(pattern = nil, &block)
       return @special unless pattern
+
+      @special and puts("Warning: redefining #{self}.special from #{caller.first}")
 
       @special = [pattern, block]
     end
@@ -74,9 +76,13 @@ class LinkHum
     end
 
     def make_attrs(uri, options)
-      attrs = options[:link_processor].call(uri) || {}
+      block = options[:link_processor] || method(:link_attrs)
+      attrs = block.call(uri) || {}
       return '' if attrs.empty?
       ' ' + attrs.map{|n, v| "#{n}='#{v.to_s}'"}.join(' ')
+    end
+
+    def link_attrs(*)
     end
 
     # stolen from activesupport/lib/active_support/core_ext/string/filters.rb, line 64

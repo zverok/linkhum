@@ -100,8 +100,8 @@ Up to you
 
 ```ruby
 class MyLinks < LinkHum
-  def url_params(uri)
-    {target: '_blank'} unless uri.domain == 'oursite.com'
+  def link_attrs(uri)
+    {target: '_blank'} unless uri.host == 'oursite.com'
   end
 end
 
