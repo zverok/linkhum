@@ -3,8 +3,10 @@ require 'addressable/uri'
 
 class LinkHum
   class << self
+    NOOP = ->(*){}
+    
     def urlify(text, options = {}, &block)
-      new(text).urlify(options)
+      new(text).urlify(options.merge(link_processor: block || NOOP))
     end
   end
 
@@ -45,7 +47,13 @@ class LinkHum
       canonical = Addressable::URI.normalized_encode(uri) rescue uri
 
       display_length = options.fetch(:max_length, MAX_DISPLAY_LENGHT)
-      "<a href='#{canonical}'>#{truncate(url, display_length)}</a>"
+      "<a href='#{canonical}'#{make_attrs(uri, options)}>#{truncate(url, display_length)}</a>"
+    end
+
+    def make_attrs(uri, options)
+      attrs = options[:link_processor].call(uri) || {}
+      return '' if attrs.empty?
+      ' ' + attrs.map{|n, v| "#{n}='#{v.to_s}'"}.join(' ')
     end
 
     # stolen from activesupport/lib/active_support/core_ext/string/filters.rb, line 64

@@ -44,6 +44,20 @@ describe LinkHum do
   end
 
   context 'additional link attrs' do
+    context 'on the fly' do
+      it 'works' do
+        expect(described_class.urlify('http://google.com'){|uri| {target: '_blank'}}).to eq \
+          "<a href='http://google.com' target='_blank'>http://google.com</a>"
+      end
+
+      it 'does not fail on no output' do
+        expect(described_class.urlify('http://google.com'){|uri| {target: '_blank'} if uri.host == 'yahoo.com'}).to eq \
+          "<a href='http://google.com'>http://google.com</a>"
+      end
+    end
+
+    context 'inheritance' do
+    end
   end
 
   context 'special patterns' do
