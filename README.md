@@ -180,6 +180,12 @@ Just usual fork-change-pull request process.
 
 ### Development
 
+* Don't forget to use `rspec` after any changes made (and specify them,
+  of course!)
+* It's preferred to use `bundle exec dokaz` to check if README written
+  correctly and `bundle exec dokaz -fshow` to check what exactly code
+  from README will output.
+
 ## License
 
 MIT
