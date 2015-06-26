@@ -22,7 +22,7 @@ class LinkHum
   PROTOCOLS = '(?:https?|ftp)'
   SPLIT_PATTERN = %r{(#{PROTOCOLS}://\p{^Space}+)}i
 
-  MAX_DISPLAY_LENGHT = 64
+  MAX_DISPLAY_LENGTH = 64
 
   def initialize(text)
     @text = text
@@ -75,7 +75,7 @@ class LinkHum
 
     canonical = Addressable::URI.normalized_encode(uri) rescue uri
 
-    display_length = options.fetch(:max_length, MAX_DISPLAY_LENGHT)
+    display_length = options.fetch(:max_length, MAX_DISPLAY_LENGTH)
     "<a href='#{canonical}'#{make_attrs(uri, options)}>"\
       "#{truncate(url, display_length)}</a>"
   end
