@@ -133,6 +133,40 @@ MyLinks.urlify("So, our @dude and @unknownguy walk into a bar...")
 # => "So, our <a href='http://oursite/users/dude'>@dude</a> and @unknownguy walk into a bar..."
 ```
 
+Some `special` gotchas:
+* for now, only one `special` per class is supported (an attempt to define
+  additional one will show warningn);
+* it passes to the block values by the same logic as `String#scan` does:
+
+```ruby
+class AllSymbols < LinkHum
+  special /@\S+\b/ do |username|
+    p username
+    nil
+  end
+end
+AllSymbols.urlify('@dude')
+# Receives "@dude"
+
+class SelectedPart < LinkHum
+  special /@(\S+)\b/ do |username|
+    p username
+    nil
+  end
+end
+SelectedPart.urlify('@dude')
+# Receives "dude"
+
+class SeveralArgs < LinkHum
+  special(/@(\S+)_(\S+)\b/) do |first, second|
+    p first, second
+    nil
+  end
+end
+SeveralArgs.urlify('@cool_dude')
+# Receives "cool", "dude"
+```
+
 ## Credits
 
 * [squadette](https://github.com/squadette) -- author of original code;
