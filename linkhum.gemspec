@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'addressable'
 
+  s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3'
   s.add_development_dependency 'rspec-its', '~> 1'
   s.add_development_dependency 'nokogiri'
