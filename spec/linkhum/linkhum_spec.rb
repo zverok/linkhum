@@ -7,6 +7,12 @@ describe LinkHum do
       "So, it parses URLs like <a href='http://google.com/'>http://google.com/</a>, or <a href='http://пивбар.рф/wtf'>http://пивбар.рф/wtf</a>?"
     }
   end
+
+  context 'evil XSS' do
+    let(:text){'Is it <s>smart</s>?'}
+    subject{described_class.urlify(text)}
+    it{should == "Is it &lt;s&gt;smart&lt;/s&gt;?"}
+  end
   
   context 'proper parsing' do
     EXAMPLES = YAML.load(File.read('spec/fixtures/examples.yml'))

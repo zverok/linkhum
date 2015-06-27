@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'addressable/uri'
+require 'cgi'
 
 class LinkHum
   class << self
@@ -49,6 +50,8 @@ class LinkHum
   end
 
   def process_text(str)
+    str = CGI.escapeHTML(str)
+    
     pattern, block = self.class.special
 
     if pattern
