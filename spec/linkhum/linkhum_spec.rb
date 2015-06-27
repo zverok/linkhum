@@ -13,6 +13,12 @@ describe LinkHum do
     subject{described_class.urlify(text)}
     it{should == "Is it &lt;s&gt;smart&lt;/s&gt;?"}
   end
+
+  context 'even more evil XSS' do
+    let(:text){'XSS: http://example.com/foo?">here.</a><script>window.alert("wow");</script>'}
+    subject{described_class.urlify(text)}
+    it{should == "XSS: <a href='http://example.com/foo?%22%3Ehere.%3C/a%3E%3Cscript%3Ewindow.alert(%22wow%22);%3C/script%3E'>http://example.com/foo?&quot;&gt;here.&lt;/a&gt;&lt;script&gt...</a>"}
+  end
   
   context 'proper parsing' do
     EXAMPLES = YAML.load(File.read('spec/fixtures/examples.yml'))

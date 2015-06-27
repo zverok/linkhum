@@ -80,7 +80,7 @@ class LinkHum
 
     display_length = options.fetch(:max_length, MAX_DISPLAY_LENGTH)
     "<a href='#{canonical}'#{make_attrs(uri, options)}>"\
-      "#{truncate(url, display_length)}</a>"
+      "#{truncate(CGI.escapeHTML(url), display_length)}</a>"
   end
 
   def make_attrs(uri, options)
