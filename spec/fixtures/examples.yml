@@ -36,10 +36,13 @@
   urls: []
 - text: "Single quotes: https://en.wikipedia.org/wiki/Rock'n'Roll"
   urls: 'https://en.wikipedia.org/wiki/Rock%27n%27Roll'
-#- text:
-  #urls:
-#- text:
-  #urls:
+
+# not a very useful for testing - so tested directly in spec
+# but useful for rendering dev:examples
+- text: 'XSS, take 2: Is it <s>smart</s>?'
+  urls: []
+- text: 'XSS, take 3: http://example.com/foo?">here.</a><script>window.alert("wow");</script>'
+  urls: 'http://example.com/foo?%22%3Ehere.%3C/a%3E%3Cscript%3Ewindow.alert(%22wow%22);%3C/script%3E'
 #- text:
   #urls:
 #- text:
