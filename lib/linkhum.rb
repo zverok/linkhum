@@ -57,7 +57,7 @@ class LinkHum
     if pattern
       str.gsub(pattern){|s|
         if (u = block.call(*arguments(pattern, s)))
-          "<a href='#{u}'>#{s}</a>"
+          "<a href='#{screen_feet(u)}'>#{s}</a>"
         else
           s
         end
@@ -79,7 +79,7 @@ class LinkHum
     canonical = Addressable::URI.normalized_encode(uri) rescue uri
 
     display_length = options.fetch(:max_length, MAX_DISPLAY_LENGTH)
-    "<a href='#{canonical}'#{make_attrs(uri, options)}>"\
+    "<a href='#{screen_feet(canonical)}'#{make_attrs(uri, options)}>"\
       "#{truncate(CGI.escapeHTML(url), display_length)}</a>"
   end
 
@@ -91,6 +91,11 @@ class LinkHum
   end
 
   def link_attrs(*)
+  end
+
+  # TIL that ' (single quote) is in fact "feet mark"
+  def screen_feet(url)
+    url.gsub("'", '%27')
   end
 
   # stolen from activesupport/lib/active_support/core_ext/string/filters.rb

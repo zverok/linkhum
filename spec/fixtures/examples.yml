@@ -34,8 +34,8 @@
   urls: HTTP://GOOGLE.COM 
 - text: 'Skype bug  http://:'
   urls: []
-#- text:
-  #urls:
+- text: "Single quotes: https://en.wikipedia.org/wiki/Rock'n'Roll"
+  urls: 'https://en.wikipedia.org/wiki/Rock%27n%27Roll'
 #- text:
   #urls:
 #- text:
