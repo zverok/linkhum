@@ -123,13 +123,13 @@ MyLinks.urlify("Hey, @jude!")
 # => "Hey, <a href='http://oursite/users/jude'>@jude</a>!"
 
 # nil or false means no replacements:
-class MyLinks < LinkHum
+class MyLinksConditional < LinkHum
   special /@(\S+)\b/ do |username|
     "http://oursite/users/#{username}" if User.where(name: username).exists?
   end
 end
 
-MyLinks.urlify("So, our @dude and @unknownguy walk into a bar...")
+MyLinksConditional.urlify("So, our @dude and @unknownguy walk into a bar...")
 # => "So, our <a href='http://oursite/users/dude'>@dude</a> and @unknownguy walk into a bar..."
 ```
 
