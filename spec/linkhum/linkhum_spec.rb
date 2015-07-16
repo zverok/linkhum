@@ -85,16 +85,36 @@ describe LinkHum do
   end
 
   context 'special patterns' do
-    let(:klass){
-      Class.new(described_class){
-        special /@(\S+)\b/ do |username|
-          "http://oursite/users/#{username}" if username == 'dude'
-        end
+    context 'one' do 
+      let(:klass){
+        Class.new(described_class){
+          special /@(\S+)\b/ do |username|
+            "http://oursite/users/#{username}" if username == 'dude'
+          end
+        }
       }
-    }
-    it 'should do smart replacement' do
-      expect(klass.urlify("It's @dude and @someguy")).to eq \
-        "It's <a href='http://oursite/users/dude'>@dude</a> and @someguy"
+      it 'should do smart replacement' do
+        expect(klass.urlify("It's @dude and @someguy")).to eq \
+          "It's <a href='http://oursite/users/dude'>@dude</a> and @someguy"
+      end
+    end
+
+    context 'several' do
+      let(:klass){
+        Class.new(described_class){
+          special /@(\S+)\b/ do |username|
+            "http://oursite/users/#{username}" if username == 'dude'
+          end
+
+          special /\#(\S+)\b/ do |tag|
+            "http://oursite/search?q=#{tag}"
+          end
+        }
+      }
+      it 'should do smart replacement' do
+        expect(klass.urlify("It's @dude and @someguy, they are #cute")).to eq \
+          "It's <a href='http://oursite/users/dude'>@dude</a> and @someguy, they are <a href='http://oursite/search?q=cute'>#cute</a>"
+      end
     end
   end
 end

@@ -134,8 +134,8 @@ MyLinks.urlify("So, our @dude and @unknownguy walk into a bar...")
 ```
 
 Some `special` gotchas:
-* for now, only one `special` per class is supported (an attempt to define
-  additional one will show warningn);
+* in version 0.0.2, you can define any number of `special`s, but it's
+  totally up to you to have non-conflicting, clearly distinguished patterns;
 * it passes to the block values by the same logic as `String#scan` does:
 
 ```ruby

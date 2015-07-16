@@ -10,13 +10,12 @@ class LinkHum
       new(text).urlify(options.merge(link_processor: block))
     end
 
+    def specials
+      @specials ||= []
+    end
+
     def special(pattern = nil, &block)
-      return @special unless pattern
-
-      @special and
-        puts("Warning: redefining #{self}.special from #{caller.first}")
-
-      @special = [pattern, block]
+      specials << [pattern, block]
     end
   end
 
@@ -52,18 +51,26 @@ class LinkHum
   def process_text(str)
     str = CGI.escapeHTML(str)
     
-    pattern, block = self.class.special
-
-    if pattern
-      str.gsub(pattern){|s|
-        if (u = block.call(*arguments(pattern, s)))
-          "<a href='#{screen_feet(u)}'>#{s}</a>"
-        else
-          s
-        end
-      }
-    else
+    if self.class.specials.empty?
       str
+    else
+      replace_specials(str)
+    end
+  end
+
+  def replace_specials(str)
+    patterns = self.class.specials.map(&:first)
+    blocks = self.class.specials.map(&:last)
+    
+    str.gsub(Regexp.union(patterns)) do |s|
+      pattern = patterns.detect{|p| s[p] == s}
+      idx = patterns.index(pattern)
+      
+      if idx && (u = blocks[idx].call(*arguments(pattern, s)))
+        "<a href='#{screen_feet(u)}'>#{s}</a>"
+      else
+        s
+      end
     end
   end
 
