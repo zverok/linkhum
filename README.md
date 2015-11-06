@@ -167,6 +167,35 @@ SeveralArgs.urlify('@cool_dude')
 # Receives "cool", "dude"
 ```
 
+### "Parse only" mode
+
+If your demands for resulting strings construction is far more complicated
+than default LinkHum behavior, you can use its `#parse` command to split
+string into tokens, and process them by yourself. All URL-detection
+goodness and `special`s still will be with you:
+
+```ruby
+class MyParser < LinkHum
+  # You don't need rendering blocks for your specials
+  # Second argument is special's name, it is optional
+  special /@(\S+)\b/, :username
+  special /\#(\S+)\b/, :tag
+end
+
+MyParser.parse("Here is @dude. He is #cute. Is he on http://facebook.com?")
+# => [
+#   {type: :text    , content: 'Here is '},
+#   {type: :special , content: '@dude', idx: 0, name: :username, captures: ['dude']},
+#   {type: :text    , content: '. He is '},
+#   {type: :special , content: '#cute', idx: 1, name: :tag, captures: ['cute']},
+#   {type: :text    , content: '. Is he on '},
+#   {type: :url     , content: 'http://facebook.com'},
+#   {type: :text    , content: '?'}
+# ]
+#
+# NB: idx here is index of special in your special patterns list
+```
+
 ## Credits
 
 * [squadette](https://github.com/squadette) -- author of original code;

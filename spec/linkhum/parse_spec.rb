@@ -33,9 +33,9 @@ describe LinkHum, :parse do
       subject{klass.parse(text)}
       it{should == [
         {type: :text, content: "It's "},
-        {type: :special, name: :username, content: '@dude', captures: ['dude']},
+        {type: :special, idx: 0, name: :username, content: '@dude', captures: ['dude']},
         {type: :text, content: ' and '},
-        {type: :special, name: :username, content: '@someguy', captures: ['someguy']},
+        {type: :special, idx: 0, name: :username, content: '@someguy', captures: ['someguy']},
       ]}
     end
 
@@ -55,11 +55,11 @@ describe LinkHum, :parse do
       subject{klass.parse(text)}
       it{should == [
         {type: :text, content: "It's "},
-        {type: :special, name: :username, content: '@dude', captures: ['dude']},
+        {type: :special, idx: 0, name: :username, content: '@dude', captures: ['dude']},
         {type: :text, content: ' and '},
-        {type: :special, name: :username, content: '@someguy', captures: ['someguy']},
+        {type: :special, idx: 0, name: :username, content: '@someguy', captures: ['someguy']},
         {type: :text, content: ', they are '},
-        {type: :special, name: :tag, content: '#cute', captures: ['cute']},
+        {type: :special, idx: 1, name: :tag, content: '#cute', captures: ['cute']},
       ]}
     end
 

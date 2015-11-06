@@ -31,7 +31,6 @@ class LinkHum
 
   def initialize(text)
     @text = text
-    @components = @text.split(URL_PATTERN)
   end
 
   def parse
@@ -47,8 +46,15 @@ class LinkHum
   end
 
   def urlify(options = {})
-    @components.map{|str|
-      URL_PATTERN =~ str ? process_url(str, options) : process_text(str)
+    parse.map{|component|
+      case component[:type]
+      when :url
+        process_url(component[:content], options)
+      when :text
+        process_text(component[:content])
+      when :special
+        process_special(component)
+      end
     }.join
   end
 
@@ -94,53 +100,30 @@ class LinkHum
 
   def update_special(hash)
     str = hash[:content]
-    pattern, name, _block = self.class.specials.find{|p, n, b| str[p] == str}
-    hash.update(name: name, captures: pattern.match(str).captures)
-  end
-
-  def process_url(str, options)
-    url, punct = str.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
-    return str unless url
-
-    if punct[0] == '/' || (punct[0] == ')' && url.include?('('))
-      url << punct.slice!(0)
+    idx = self.class.specials.find_index{|p, n, b| str[p] == str}
+    if idx
+      pattern, name, _block = self.class.specials[idx]
+      hash.update(idx: idx, name: name, captures: pattern.match(str).captures)
     end
-    
-    make_link(url, options) + punct
   end
 
   def process_text(str)
-    str = CGI.escapeHTML(str)
+    CGI.escapeHTML(str)
+  end
+
+  def process_special(special)
+    return special[:content] unless special[:idx]
     
-    if self.class.specials.empty?
-      str
+    _pattern, _name, block = self.class.specials[special[:idx]]
+    args = special[:captures] || [special[:match]]
+    if u = block.call(*args)
+      "<a href='#{screen_feet(u)}'>#{special[:content]}</a>"
     else
-      replace_specials(str)
+      special[:content]
     end
   end
 
-  def replace_specials(str)
-    patterns = self.class.specials.map(&:first)
-    blocks = self.class.specials.map(&:last)
-    
-    str.gsub(Regexp.union(patterns)) do |s|
-      pattern = patterns.detect{|p| s[p] == s}
-      idx = patterns.index(pattern)
-      
-      if idx && (u = blocks[idx].call(*arguments(pattern, s)))
-        "<a href='#{screen_feet(u)}'>#{s}</a>"
-      else
-        s
-      end
-    end
-  end
-
-  def arguments(pattern, string)
-    m = pattern.match(string)
-    m.captures.empty? ? m[0] : m.captures
-  end
-
-  def make_link(url, options)
+  def process_url(url, options)
     uri = Addressable::URI.parse(url) rescue nil
     return url unless uri
 

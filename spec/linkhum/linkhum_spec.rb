@@ -94,8 +94,8 @@ describe LinkHum do
         }
       }
       it 'should do smart replacement' do
-        expect(klass.urlify("It's @dude and @someguy")).to eq \
-          "It's <a href='http://oursite/users/dude'>@dude</a> and @someguy"
+        expect(klass.urlify("It is @dude and @someguy")).to eq \
+          "It is <a href='http://oursite/users/dude'>@dude</a> and @someguy"
       end
     end
 
@@ -112,8 +112,8 @@ describe LinkHum do
         }
       }
       it 'should do smart replacement' do
-        expect(klass.urlify("It's @dude and @someguy, they are #cute")).to eq \
-          "It's <a href='http://oursite/users/dude'>@dude</a> and @someguy, they are <a href='http://oursite/search?q=cute'>#cute</a>"
+        expect(klass.urlify("It is @dude and @someguy, they are #cute")).to eq \
+          "It is <a href='http://oursite/users/dude'>@dude</a> and @someguy, they are <a href='http://oursite/search?q=cute'>#cute</a>"
       end
     end
   end
