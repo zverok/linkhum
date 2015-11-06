@@ -28,5 +28,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-its', '~> 1'
   s.add_development_dependency 'nokogiri'
   s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'rubygems-tasks'
   #s.add_development_dependency 'dokaz'
 end
