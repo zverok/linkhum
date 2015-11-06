@@ -10,6 +10,10 @@ class LinkHum
       new(text).urlify(options.merge(link_processor: block))
     end
 
+    def parse(text)
+      new(text).parse
+    end
+
     def specials
       @specials ||= []
     end
@@ -20,22 +24,50 @@ class LinkHum
   end
 
   PROTOCOLS = '(?:https?|ftp)'
-  SPLIT_PATTERN = %r{(#{PROTOCOLS}://\p{^Space}+)}i
+  URL_PATTERN = %r{(#{PROTOCOLS}://\p{^Space}+)}i
 
   MAX_DISPLAY_LENGTH = 64
 
   def initialize(text)
     @text = text
-    @components = @text.split(SPLIT_PATTERN)
+    @components = @text.split(URL_PATTERN)
+  end
+
+  def parse
+    (@text.split(URL_PATTERN) + ['']).tap{|components|
+      (components).each_cons(2){|left, right|
+        # ['http://google.com', '/ and stuff'] => ['http://google.com/', ' and stuff']
+        shift_punct(left, right) if url?(left) && !url?(right)
+      }
+    }.reject(&:empty?).
+    map{|comp|
+      url?(comp) ? {type: :url, content: comp} : {type: :text, content: comp}
+    }
+  end
+
+  def url?(str)
+    URL_PATTERN =~ str
   end
 
   def urlify(options = {})
     @components.map{|str|
-      SPLIT_PATTERN =~ str ? process_url(str, options) : process_text(str)
+      URL_PATTERN =~ str ? process_url(str, options) : process_text(str)
     }.join
   end
 
   private
+
+  # NB: nasty inplace strings changing is going on inside, beware!
+  def shift_punct(url, text_after)
+    url_, punct = url.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
+    return unless url_
+    if punct[0] == '/' || (punct[0] == ')' && url.include?('('))
+      url_ << punct.slice!(0)
+    end
+    
+    url.replace(url_)
+    text_after.prepend(punct)
+  end
 
   def process_url(str, options)
     url, punct = str.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
