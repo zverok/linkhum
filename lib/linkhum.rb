@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'addressable/uri'
 require 'cgi'
+require 'strscan'
 
 class LinkHum
   class << self
@@ -18,8 +19,8 @@ class LinkHum
       @specials ||= []
     end
 
-    def special(pattern = nil, &block)
-      specials << [pattern, block]
+    def special(pattern, name = nil, &block)
+      specials << [pattern, name, block]
     end
   end
 
@@ -40,13 +41,9 @@ class LinkHum
         shift_punct(left, right) if url?(left) && !url?(right)
       }
     }.reject(&:empty?).
-    map{|comp|
-      url?(comp) ? {type: :url, content: comp} : {type: :text, content: comp}
-    }
-  end
-
-  def url?(str)
-    URL_PATTERN =~ str
+    map{|str|
+      url?(str) ? {type: :url, content: str} : parse_specials(str)
+    }.flatten
   end
 
   def urlify(options = {})
@@ -57,16 +54,48 @@ class LinkHum
 
   private
 
+  def url?(str)
+    str =~ URL_PATTERN
+  end
+  
   # NB: nasty inplace strings changing is going on inside, beware!
   def shift_punct(url, text_after)
     url_, punct = url.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
     return unless url_
+    
     if punct[0] == '/' || (punct[0] == ')' && url.include?('('))
       url_ << punct.slice!(0)
     end
     
     url.replace(url_)
     text_after.prepend(punct)
+  end
+
+  def parse_specials(str)
+    res = []
+    str = str.dup
+    while !str.empty?
+      md = (specials_pattern.match(str)) or break
+      md.length.zero? and fail(RuntimeError, "Empty string matched by special at '#{str}'")
+      
+      res << {type: :text, content: md.pre_match}
+      res << {type: :special, content: md[0]}
+      str = md.post_match
+    end
+    res << {type: :text, content: str}
+    res.reject{|r| r[:content].empty?}.each{|r|
+      update_special(r) if r[:type] == :special
+    }
+  end
+
+  def specials_pattern
+    @specials_pattern ||= Regexp.union(self.class.specials.map(&:first))
+  end
+
+  def update_special(hash)
+    str = hash[:content]
+    pattern, name, _block = self.class.specials.find{|p, n, b| str[p] == str}
+    hash.update(name: name, captures: pattern.match(str).captures)
   end
 
   def process_url(str, options)
