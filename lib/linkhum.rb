@@ -16,11 +16,18 @@ class LinkHum
     end
 
     def specials
-      @specials ||= []
+      @specials ||= {}
     end
 
+    RESERVED_NAMES = [:text, :url, :special]
+
     def special(pattern, name = nil, &block)
-      specials << [pattern, name, block]
+      name ||= "special_#{specials.count + 1}".to_sym
+
+      RESERVED_NAMES.include?(name) and fail(ArgumentError, "#{name} is reserved")
+      specials.key?(name) and fail(ArgumentError, "#{name} is already defined")
+      
+      specials[name] = [pattern, block]
     end
   end
 
@@ -52,7 +59,7 @@ class LinkHum
         process_url(component[:content], options)
       when :text
         process_text(component[:content])
-      when :special
+      else
         process_special(component)
       end
     }.join
@@ -95,15 +102,14 @@ class LinkHum
   end
 
   def specials_pattern
-    @specials_pattern ||= Regexp.union(self.class.specials.map(&:first))
+    @specials_pattern ||= Regexp.union(self.class.specials.values.map(&:first))
   end
 
   def update_special(hash)
     str = hash[:content]
-    idx = self.class.specials.find_index{|p, n, b| str[p] == str}
-    if idx
-      pattern, name, _block = self.class.specials[idx]
-      hash.update(idx: idx, name: name, captures: pattern.match(str).captures)
+    name, (pattern, block) = self.class.specials.detect{|n, (p, b)| str[p] == str}
+    if name
+      hash.update(type: name, captures: pattern.match(str).captures)
     end
   end
 
@@ -112,9 +118,9 @@ class LinkHum
   end
 
   def process_special(special)
-    return special[:content] unless special[:idx]
+    return special[:content] if special[:type] == :special
     
-    _pattern, _name, block = self.class.specials[special[:idx]]
+    _pattern, block = self.class.specials[special[:type]]
     args = special[:captures] || [special[:match]]
     if u = block.call(*args)
       "<a href='#{screen_feet(u)}'>#{special[:content]}</a>"

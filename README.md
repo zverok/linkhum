@@ -185,15 +185,13 @@ end
 MyParser.parse("Here is @dude. He is #cute. Is he on http://facebook.com?")
 # => [
 #   {type: :text    , content: 'Here is '},
-#   {type: :special , content: '@dude', idx: 0, name: :username, captures: ['dude']},
+#   {type: :username, content: '@dude', captures: ['dude']},
 #   {type: :text    , content: '. He is '},
-#   {type: :special , content: '#cute', idx: 1, name: :tag, captures: ['cute']},
+#   {type: :tag     , content: '#cute', captures: ['cute']},
 #   {type: :text    , content: '. Is he on '},
 #   {type: :url     , content: 'http://facebook.com'},
 #   {type: :text    , content: '?'}
 # ]
-#
-# NB: idx here is index of special in your special patterns list
 ```
 
 ## Credits

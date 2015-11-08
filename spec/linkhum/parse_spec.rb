@@ -33,33 +33,49 @@ describe LinkHum, :parse do
       subject{klass.parse(text)}
       it{should == [
         {type: :text, content: "It's "},
-        {type: :special, idx: 0, name: :username, content: '@dude', captures: ['dude']},
+        {type: :username, content: '@dude', captures: ['dude']},
         {type: :text, content: ' and '},
-        {type: :special, idx: 0, name: :username, content: '@someguy', captures: ['someguy']},
+        {type: :username, content: '@someguy', captures: ['someguy']},
       ]}
     end
 
     context 'several' do
       let(:klass){
         Class.new(described_class){
-          special /@(\S+)\b/, :username do |username|
-            "http://oursite/users/#{username}" if username == 'dude'
-          end
+          special /@(\S+)\b/, :username
 
-          special /\#(\S+)\b/, :tag do |tag|
-            "http://oursite/search?q=#{tag}"
-          end
+          special /\#(\S+)\b/, :tag
         }
       }
       let(:text){"It's @dude and @someguy, they are #cute"}
       subject{klass.parse(text)}
       it{should == [
         {type: :text, content: "It's "},
-        {type: :special, idx: 0, name: :username, content: '@dude', captures: ['dude']},
+        {type: :username, content: '@dude', captures: ['dude']},
         {type: :text, content: ' and '},
-        {type: :special, idx: 0, name: :username, content: '@someguy', captures: ['someguy']},
+        {type: :username, content: '@someguy', captures: ['someguy']},
         {type: :text, content: ', they are '},
-        {type: :special, idx: 1, name: :tag, content: '#cute', captures: ['cute']},
+        {type: :tag, content: '#cute', captures: ['cute']},
+      ]}
+    end
+
+    context 'unnamed' do
+      let(:klass){
+        Class.new(described_class){
+          special /@(\S+)\b/, :username
+
+          special /\#(\S+)\b/
+        }
+      }
+      let(:text){"It's @dude and @someguy, they are #cute"}
+      subject{klass.parse(text)}
+      it{should == [
+        {type: :text, content: "It's "},
+        {type: :username, content: '@dude', captures: ['dude']},
+        {type: :text, content: ' and '},
+        {type: :username, content: '@someguy', captures: ['someguy']},
+        {type: :text, content: ', they are '},
+        {type: :special_2, content: '#cute', captures: ['cute']},
       ]}
     end
 
