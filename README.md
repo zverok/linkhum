@@ -12,7 +12,7 @@ Features:
 * customizable behavior.
 
 **NB**: the original algo was written by [squadette](https://github.com/squadette)
-and the test cases provided by users of _some secret social network_.
+and the test cases provided by users of [Mokum](https://mokum.place).
 Just gemifying this (on behalf of original author).
 
 ## Install
@@ -197,7 +197,8 @@ MyParser.parse("Here is @dude. He is #cute. Is he on http://facebook.com?")
 ## Credits
 
 * [squadette](https://github.com/squadette) -- author of original code;
-* users of _some secret social network_ -- testing and advicing;
+* users of [Mokum](https://mokum.place) -- testing and advicing (and now
+  you can observe LinkHum work online at Mokum);
 * [zverok](https://github.com/zverok) -- gemifying, documenting and
   writing specs.
 
