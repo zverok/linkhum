@@ -73,8 +73,8 @@ class LinkHum
   
   # NB: nasty inplace strings changing is going on inside, beware!
   def shift_punct(url, text_after)
-    url_, punct = url.scan(%r{\A(#{PROTOCOLS}://.+?)(\p{Punct}*)\Z}i).flatten
-    return unless url_
+    url_, punct = url.scan(%r{\A(#{PROTOCOLS}://.*?)(\p{Punct}*)\Z}i).flatten
+    return if !url_ || url[PROTOCOLS] == url
     
     if punct[0] == '/' || (punct[0] == ')' && url.include?('('))
       url_ << punct.slice!(0)
