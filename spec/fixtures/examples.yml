@@ -8,6 +8,8 @@
   urls: ["http://slashdot.org/", "http://lwn.net/", "http://opensource.org/"] 
 - text: "it's a movie: https://en.wikipedia.org/wiki/Hours_(2013_film) but it works with just parens (https://www.youtube.com/watch?v=Q9Dv4Hmf_O8)"
   urls: ["https://en.wikipedia.org/wiki/Hours_(2013_film)", "https://www.youtube.com/watch?v=Q9Dv4Hmf_O8"]
+- text: "There are JSON-encoded URLs: https://www.dropbox.com/log?{%22a%22:%22b%22,%22c%22:4}"
+  urls: "https://www.dropbox.com/log?%7B%22a%22:%22b%22,%22c%22:4%7D"
 - text: https://пивбар-хмель.рф/ for the record
   urls: https://пивбар-хмель.рф/
 - text: http://www.booking.com/searchresults.html?sid=79b5eeb441120b08fcd3ebe467b0a0b8;dcid=1;bb_asr=2&class_interval=1&csflt=%7B%7D&dest_id=-2167973&dest_type=city&dtdisc=0&group_adults=2&group_children=0&hlrd=0&hyb_red=0&idf=1&inac=0&nha_red=0&no_rooms=1&offset=0&redirected_from_city=0&redirected_from_landmark=0&redirected_from_region=0&review_score_group=empty&score_min=0&si=ai,co,ci,re,di&src=index&ss=Lisbon,%20Lisbon%20Region,%20Portugal&ss_all=0&ss_raw=Lisbon&ssb=empty&sshis=0&
