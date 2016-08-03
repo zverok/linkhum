@@ -11,7 +11,7 @@
 - text: https://пивбар-хмель.рф/ for the record
   urls: https://пивбар-хмель.рф/
 - text: http://www.booking.com/searchresults.html?sid=79b5eeb441120b08fcd3ebe467b0a0b8;dcid=1;bb_asr=2&class_interval=1&csflt=%7B%7D&dest_id=-2167973&dest_type=city&dtdisc=0&group_adults=2&group_children=0&hlrd=0&hyb_red=0&idf=1&inac=0&nha_red=0&no_rooms=1&offset=0&redirected_from_city=0&redirected_from_landmark=0&redirected_from_region=0&review_score_group=empty&score_min=0&si=ai,co,ci,re,di&src=index&ss=Lisbon,%20Lisbon%20Region,%20Portugal&ss_all=0&ss_raw=Lisbon&ssb=empty&sshis=0&
-  urls: http://www.booking.com/searchresults.html?sid=79b5eeb441120b08fcd3ebe467b0a0b8;dcid=1;bb_asr=2&class_interval=1&csflt=%7B%7D&dest_id=-2167973&dest_type=city&dtdisc=0&group_adults=2&group_children=0&hlrd=0&hyb_red=0&idf=1&inac=0&nha_red=0&no_rooms=1&offset=0&redirected_from_city=0&redirected_from_landmark=0&redirected_from_region=0&review_score_group=empty&score_min=0&si=ai,co,ci,re,di&src=index&ss=Lisbon,%20Lisbon%20Region,%20Portugal&ss_all=0&ss_raw=Lisbon&ssb=empty&sshis=0
+  urls: http://www.booking.com/searchresults.html?sid=79b5eeb441120b08fcd3ebe467b0a0b8;dcid=1;bb_asr=2&class_interval=1&csflt=%7B%7D&dest_id=-2167973&dest_type=city&dtdisc=0&group_adults=2&group_children=0&hlrd=0&hyb_red=0&idf=1&inac=0&nha_red=0&no_rooms=1&offset=0&redirected_from_city=0&redirected_from_landmark=0&redirected_from_region=0&review_score_group=empty&score_min=0&si=ai,co,ci,re,di&src=index&ss=Lisbon,%20Lisbon%20Region,%20Portugal&ss_all=0&ss_raw=Lisbon&ssb=empty&sshis=0&
 - text: http://squadette.ru/foo?bar=1&baz=2 ampersands in URL
   urls: http://squadette.ru/foo?bar=1&baz=2
 - text: 'XSS: http://example.com/foo?">here.</a><script>window.alert("wow");</script>'
@@ -38,6 +38,14 @@
   urls: []
 - text: "Single quotes: https://en.wikipedia.org/wiki/Rock'n'Roll"
   urls: 'https://en.wikipedia.org/wiki/Rock%27n%27Roll'
+- text: "http://www.bloomberg.com/news/articles/2015-04-21/janus-s-gross-says-german-10-year-bunds-short-of-a-lifetime-"
+  urls: 'http://www.bloomberg.com/news/articles/2015-04-21/janus-s-gross-says-german-10-year-bunds-short-of-a-lifetime-'
+- text: "SPA anchors, pt. 1: https://single-page.com/#/foobar/"
+  urls: "https://single-page.com/#/foobar/"
+- text: "SPA anchors, pt. 2: https://single-page.com/#/"
+  urls: "https://single-page.com/#/"
+- text: "Spurious ampersand: https://example.com?foo=bar&"
+  urls: "https://example.com?foo=bar&"
 
 # not a very useful for testing - so tested directly in spec
 # but useful for rendering dev:examples
