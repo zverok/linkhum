@@ -48,6 +48,8 @@
   urls: "https://single-page.com/#/"
 - text: "Spurious ampersand: https://example.com?foo=bar&"
   urls: "https://example.com?foo=bar&"
+- text: "Trailing underscore: https://www.instagram.com/dianaageeva_"
+  urls: "https://www.instagram.com/dianaageeva_"
 
 # not a very useful for testing - so tested directly in spec
 # but useful for rendering dev:examples
