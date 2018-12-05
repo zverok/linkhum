@@ -50,6 +50,8 @@
   urls: "https://example.com?foo=bar&"
 - text: "Trailing underscore: https://www.instagram.com/dianaageeva_"
   urls: "https://www.instagram.com/dianaageeva_"
+- text: "Trailing asterisk: https://example.com/?q=random*, and"
+  urls: "https://example.com/?q=random*"
 
 # not a very useful for testing - so tested directly in spec
 # but useful for rendering dev:examples
