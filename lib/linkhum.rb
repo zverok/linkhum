@@ -76,7 +76,10 @@ class LinkHum
     url_, punct = url.scan(%r{\A(#{PROTOCOLS}://.*?)([^\P{Punct}#/&_*-]*)\Z}i).flatten
     return if !url_ || url[PROTOCOLS] == url
     
-    if punct[0] == '/' || (punct[0] == ')' && url.include?('(')) || (punct[0] == '}' && url.include?('{'))
+    if punct[0] == '/' ||
+       (punct[0] == ')' && url.include?('(')) ||
+       (punct[0] == '}' && url.include?('{')) ||
+       (punct[0] == '»' && url.include?('«'))
       url_ << punct.slice!(0)
     end
     
