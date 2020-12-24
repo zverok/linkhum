@@ -32,7 +32,7 @@ class LinkHum
   end
 
   PROTOCOLS = '(?:https?|ftp)'
-  URL_PATTERN = %r{(#{PROTOCOLS}://\p{^Space}+)}i
+  URL_PATTERN = %r{(#{PROTOCOLS}://[^\P{^Space}<]+)}i
 
   MAX_DISPLAY_LENGTH = 64
 

@@ -17,7 +17,7 @@ describe LinkHum do
   context 'even more evil XSS' do
     let(:text){'XSS: http://example.com/foo?">here.</a><script>window.alert("wow");</script>'}
     subject{described_class.urlify(text)}
-    it{should == "XSS: <a href='http://example.com/foo?%22%3Ehere.%3C/a%3E%3Cscript%3Ewindow.alert(%22wow%22);%3C/script%3E'>http://example.com/foo?&quot;&gt;here.&lt;/a&gt;&lt;script&gt...</a>"}
+    it{should == "XSS: <a href='http://example.com/foo?%22%3Ehere'>http://example.com/foo?&quot;&gt;here</a>.&lt;/a&gt;&lt;script&gt;window.alert(&quot;wow&quot;);&lt;/script&gt;"}
   end
   
   context 'proper parsing' do
